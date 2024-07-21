@@ -16,7 +16,7 @@ const Form = function ({ name, setName, darkMode, toggleDarkMode, setJoined }) {
 				</div>
 				<div id="start-button">
 					<button
-						className={`mt-4 px-6 py-2 ${darkMode ? 'bg-blue-500' : 'bg-blue-600'} text-white rounded-lg hover:bg-blue-700 focus:outline-none flex items-center justify-center`}
+						className={`mt-4 px-6 py-2 ${darkMode ? 'bg-white' : 'bg-black'}  ${darkMode ? 'text-black' : 'text-white'} rounded-lg hover:bg-gray-200 focus:outline-none flex items-center justify-center`}
 						onClick={() => {
 							if (name.trim() !== '') {
 								setJoined(true);

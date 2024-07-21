@@ -2,6 +2,8 @@ import { Socket, io } from "socket.io-client";
 import { useEffect, useRef, useState } from "react";
 
 import { Navbar } from "./Navbar";
+import TextChat from "./TextChat";
+import VideoChat from "./VideoChat";
 
 var URL = "https://3t0aippcm8.execute-api.ap-south-1.amazonaws.com";
 URL = "http://localhost:3000"
@@ -298,66 +300,30 @@ export const Room = ({
 	// }, [localVideoRef])
 
 	return (
-		<div className={`flex flex-col h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-800'}`}>
+		<div className={`flex min-h-screen flex-col ${darkMode ? 'bg-black text-white' : 'bg-gray-200 text-gray-800'}`}>
 			<Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} name={name} />
-			<div className={`bg-${darkMode ? 'gray-900' : 'gray-200'} text-${darkMode ? 'white' : 'black'} h-full flex flex-col items-center justify-center py-8`}>
+			<div className={`bg-${darkMode ? 'bg-black' : 'gray-200'} text-${darkMode ? 'white' : 'black'} py-5`}>
 				<div className="flex w-full">
 					{/* Left Part */}
-					<div className="flex-1 flex flex-col items-center justify-center">
-						<div className="w-3/4">
-							<video autoPlay width={400} height={400} ref={localVideoRef} className="m-2" />
-							{lobby && <p className="text-gray-500 text-sm">Waiting to connect you to someone</p>}
-							<video autoPlay width={400} height={400} ref={remoteVideoRef} className="m-2" />
-							<div className="flex mt-4">
-								<button onClick={() => {
-									handleLeave(false);
-									socket.emit("leave");
-								}} className={`px-4 py-2 ${darkMode ? 'bg-blue-500' : 'bg-blue-600'} text-white rounded-md mr-4 ${darkMode ? 'hover:bg-blue-600' : 'hover:bg-blue-700'}`}>Skip</button>
-								<button onClick={() => {
-									handleLeave(true);
-									socket.emit("close");
-									setJoined(false);
-								}} className={`px-4 py-2 ${darkMode ? 'bg-red-500' : 'bg-red-600'} text-white rounded-md ${darkMode ? 'hover:bg-red-600' : 'hover:bg-red-700'}`}>Leave</button>
-							</div>
-						</div>
-					</div>
+					<VideoChat 
+					lobby={lobby} 
+					localVideoRef={localVideoRef} 
+					remoteVideoRef={remoteVideoRef}
+					handleLeave={handleLeave}
+					socket={socket}
+					setJoined={setJoined}
+					darkMode={darkMode}
+					/>
 					{/* Right Part */}
-					<div className="flex-1 flex flex-col items-center justify-center">
-						<div className=" w-1/2 text-left">{partnerName ? `You are now chatting with ${partnerName}` : "Finding someone!"}</div>
-						<div className={`w-1/2 bg-${darkMode ? 'gray-700' : 'gray-100'} p-4 rounded-lg shadow-md h-[600px] overflow-y-auto flex flex-col-reverse`}>
-							{chatMessages.map((message, index) => {
-								if (message[0] === "You") {
-									return (
-										<div key={index} className="flex flex-col items-start mb-4">
-											<div className="bg-blue-500 rounded-md p-2 text-white max-w-64 break-words min-w-16">
-												{message[1]}
-											</div>
-											<div className="text-xs">{message[0]}</div>
-										</div>
-									);
-								} else {
-									return (
-										<div key={index} className="flex flex-col items-end mb-4">
-											<div className={`bg-${darkMode ? 'gray-200' : 'white'} rounded-md p-2 text-gray-900 max-w-64 break-words min-w-16`}>
-												{message[1]}
-											</div>
-											<div className="text-xs">{message[0]}</div>
-										</div>
-									);
-								}
-							})}
-						</div>
-						<div className="mt-4 w-1/2">
-							<input value={chat} placeholder="Message" onChange={(e) => setChat(e.target.value)} type="text" className={`w-full px-4 py-2 border ${darkMode ? 'border-gray-700 text-white bg-gray-700' : 'border-gray-300 bg-white'} rounded-md focus:outline-none`} />
-							<button onClick={() => {
-								if (sendingDc && chat.trim() !== "") {
-									setChatMessages(prevMessages => [["You", chat], ...prevMessages]);
-									sendingDc.send(chat);
-									setChat('');
-								}
-							}} className={`w-full mt-2 px-4 py-2 ${darkMode ? 'bg-green-500' : 'bg-green-600'} text-white rounded-md ${darkMode ? 'hover:bg-green-600' : 'hover:bg-green-700'}`}>Send</button>
-						</div>
-					</div>
+					<TextChat
+					partnerName={partnerName} 
+					chatMessages={chatMessages}
+					sendingDc={sendingDc}
+					chat={chat}
+					setChatMessages={setChatMessages}
+					setChat={setChat}
+					darkMode={darkMode}
+					/>
 				</div>
 			</div>
 		</div>
