@@ -55,7 +55,7 @@ export const Room = ({
 	const [partnerName, setPartnerName] = useState<string>("");
 
 	function handleLeave(doStopCam) {
-		if(doStopCam) stopCam();
+		if (doStopCam) stopCam();
 		if (remoteVideoRef.current) {
 			remoteVideoRef.current.srcObject = null;
 		}
@@ -83,25 +83,25 @@ export const Room = ({
 
 	const stopCam = () => {
 		if (localAudioTrack) {
-		  localAudioTrack.stop();
+			localAudioTrack.stop();
 		}
 		if (localVideoTrack) {
-		  localVideoTrack.stop();
+			localVideoTrack.stop();
 		}
 		if (localVideoRef.current && localVideoRef.current.srcObject) {
-		  //@ts-ignore
-		  const tracks = localVideoRef.current.srcObject.getTracks();
-		  tracks.forEach(track => track.stop());
-		  localVideoRef.current.srcObject = null;
+			//@ts-ignore
+			const tracks = localVideoRef.current.srcObject.getTracks();
+			tracks.forEach(track => track.stop());
+			localVideoRef.current.srcObject = null;
 		}
 
 		navigator.mediaDevices.getUserMedia({ audio: true, video: true })
-		.then(stream => {
-		  stream.getTracks().forEach(track => track.stop());
-		})
-		.catch(error => console.error("Error accessing media devices.", error));
-	};  
-		
+			.then(stream => {
+				stream.getTracks().forEach(track => track.stop());
+			})
+			.catch(error => console.error("Error accessing media devices.", error));
+	};
+
 	const getCam = async () => {
 		const stream = await window.navigator.mediaDevices.getUserMedia({
 			video: true,
@@ -302,26 +302,26 @@ export const Room = ({
 		<div className={`flex min-h-screen flex-col ${darkMode ? 'bg-black text-white' : 'bg-gray-200 text-gray-800'}`}>
 			<Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} name={name} />
 			<div className={`bg-${darkMode ? 'bg-black' : 'gray-200'} text-${darkMode ? 'white' : 'black'} py-5`}>
-				<div className="flex w-full">
+				<div className="flex flex-col lg:flex-row w-full">
 					{/* Left Part */}
-					<VideoChat 
-					lobby={lobby} 
-					localVideoRef={localVideoRef} 
-					remoteVideoRef={remoteVideoRef}
-					handleLeave={handleLeave}
-					socket={socket}
-					setJoined={setJoined}
-					darkMode={darkMode}
+					<VideoChat
+						lobby={lobby}
+						localVideoRef={localVideoRef}
+						remoteVideoRef={remoteVideoRef}
+						handleLeave={handleLeave}
+						socket={socket}
+						setJoined={setJoined}
+						darkMode={darkMode}
 					/>
 					{/* Right Part */}
 					<TextChat
-					partnerName={partnerName} 
-					chatMessages={chatMessages}
-					sendingDc={sendingDc}
-					chat={chat}
-					setChatMessages={setChatMessages}
-					setChat={setChat}
-					darkMode={darkMode}
+						partnerName={partnerName}
+						chatMessages={chatMessages}
+						sendingDc={sendingDc}
+						chat={chat}
+						setChatMessages={setChatMessages}
+						setChat={setChat}
+						darkMode={darkMode}
 					/>
 				</div>
 			</div>
