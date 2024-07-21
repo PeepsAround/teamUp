@@ -1,4 +1,18 @@
 const TextChat = ({ partnerName, chatMessages, sendingDc, chat, setChatMessages, setChat, darkMode }) => {
+	const handleSendMessage = () => {
+		if (sendingDc && chat.trim() !== "") {
+			setChatMessages(prevMessages => [["You", chat], ...prevMessages]);
+			sendingDc.send(chat);
+			setChat('');
+		}
+	};
+
+	const handleKeyDown = (e) => {
+		if (e.key === 'Enter') {
+			handleSendMessage();
+		}
+	};
+
 	return (
 		<div id="Textchat" className="flex-1 flex flex-col mr-32">
 			<div className=" w-full text-left">{partnerName ? `You are now chatting with ${partnerName}` : "Finding someone!"}</div>
@@ -27,20 +41,26 @@ const TextChat = ({ partnerName, chatMessages, sendingDc, chat, setChatMessages,
 			</div>
 			<div className="mt-4 w-full flex flex-row gap-2">
 				<div className="w-5/6">
-					<input value={chat} placeholder="Message" onChange={(e) => setChat(e.target.value)} type="text" className={`w-full px-4 py-2 border ${darkMode ? 'border-gray-700 text-white bg-gray-700' : 'border-gray-300 bg-white'} rounded-md focus:outline-none`} />
+					<input
+						value={chat}
+						placeholder="Message"
+						onChange={(e) => setChat(e.target.value)}
+						onKeyDown={handleKeyDown}
+						type="text"
+						className={`w-full px-4 py-2 border ${darkMode ? 'border-gray-700 text-white bg-gray-700' : 'border-gray-300 bg-white'} rounded-md focus:outline-none`}
+					/>
 				</div>
 				<div className="w-1/6">
-					<button onClick={() => {
-						if (sendingDc && chat.trim() !== "") {
-							setChatMessages(prevMessages => [["You", chat], ...prevMessages]);
-							sendingDc.send(chat);
-							setChat('');
-						}
-					}} className={`w-full px-4 py-2 ${darkMode ? 'bg-gray-600' : 'bg-gray-600'} text-white rounded-md ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-700'}`}>Send</button>
+					<button
+						onClick={handleSendMessage}
+						className={`w-full px-4 py-2 ${darkMode ? 'bg-gray-600' : 'bg-gray-600'} text-white rounded-md ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-700'}`}
+					>
+						Send
+					</button>
 				</div>
 			</div>
 		</div>
-	)
-}
+	);
+};
 
 export default TextChat;
