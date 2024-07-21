@@ -2,9 +2,9 @@ const VideoChat = ({ lobby, localVideoRef, remoteVideoRef, handleLeave, socket, 
 	return (
 		<div id="VideoChat" className="w-full lg:w-1/2 flex flex-col mt-6 lg:ml-32">
 		  <div className="w-full lg:w-3/4">
-			<video className="rounded-sm" autoPlay width="100%" height="auto" ref={localVideoRef} />
+			<video className="rounded-sm max-h-64" autoPlay width="100%" height="auto" ref={localVideoRef} />
 			{lobby && <p className="text-sm">Waiting to connect you to someone</p>}
-			<video className="rounded-sm my-2" autoPlay width="100%" height="auto" ref={remoteVideoRef} />
+			<video className="rounded-sm max-h-64 my-2" autoPlay width="100%" height="auto" ref={remoteVideoRef} />
 		  </div>
 		  <div className="flex mt-4">
 			<button 
