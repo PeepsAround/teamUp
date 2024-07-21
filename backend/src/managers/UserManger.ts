@@ -1,5 +1,5 @@
-import { Socket } from "socket.io";
 import { RoomManager } from "./RoomManager";
+import { Socket } from "socket.io";
 
 export interface User {
     socket: Socket;
