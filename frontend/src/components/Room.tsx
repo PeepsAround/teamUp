@@ -76,6 +76,7 @@ export const Room = ({
 
             return pc;
         })
+		setPartnerName(null);
     }
 
     const getCam = async () => {
@@ -259,9 +260,10 @@ export const Room = ({
 			socket.on("leave", () => {
 				handleLeave();
 			})
+
+			setSocket(socket);
 		}
 
-        setSocket(socket)
     }, [name, localVideoRef, joined, tracksLoaded])
 
     // useEffect(() => {
@@ -286,26 +288,20 @@ export const Room = ({
                         <video autoPlay width={400} height={400} ref={remoteVideoRef} className="m-2" />
                         <div className="flex mt-4">
                             <button onClick={() => {
-                                if (socket) {
-									alert(1);
-                                    handleLeave();
-                                    socket.emit("leave");
-                                }
+								handleLeave();
+								socket.emit("leave");
                             }} className={`px-4 py-2 ${darkMode ? 'bg-blue-500' : 'bg-blue-600'} text-white rounded-md mr-4 ${darkMode ? 'hover:bg-blue-600' : 'hover:bg-blue-700'}`}>Skip</button>
                             <button onClick={() => {
-                                if (socket) {
-									alert(2);
-                                    handleLeave();
-                                    socket.emit("close");
-                                    setJoined(false);
-                                }
+								handleLeave();
+								socket.emit("close");
+								setJoined(false);
                             }} className={`px-4 py-2 ${darkMode ? 'bg-red-500' : 'bg-red-600'} text-white rounded-md ${darkMode ? 'hover:bg-red-600' : 'hover:bg-red-700'}`}>Leave</button>
                         </div>
                     </div>
                 </div>
                 {/* Right Part */}
                 <div className="flex-1 flex flex-col items-center justify-center">
-                    <div className=" w-1/2 text-left">You are now chatting with {partnerName}</div>
+                    <div className=" w-1/2 text-left">{partnerName ? `You are now chatting with ${partnerName}` : "Finding someone!" }</div>
                     <div className={`w-1/2 bg-${darkMode ? 'gray-700' : 'gray-100'} p-4 rounded-lg shadow-md h-[600px] overflow-y-auto flex flex-col-reverse`}>
                         {chatMessages.map((message, index) => {
                             if (message[0] === "You") {

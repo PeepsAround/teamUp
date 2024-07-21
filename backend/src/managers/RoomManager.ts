@@ -1,4 +1,4 @@
- import { User } from "./UserManger";
+import { User } from "./UserManger";
 
 let GLOBAL_ROOM_ID = 1;
 
@@ -71,6 +71,7 @@ export class RoomManager {
         for (let [key, value] of this.rooms.entries()) {
             if (value.user1 === user || value.user2 === user) {
                 roomId = key;
+                break;
             }
         }
 

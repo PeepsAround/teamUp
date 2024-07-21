@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-import Lobby from "./Lobby";
+import Form from "./JoiningForm";
 import { Room } from "./Room";
 
 export const Homepage = () => {
@@ -33,7 +33,7 @@ export const Homepage = () => {
     if (!joined) {
             
         return (
-			<Lobby name={name} setName={setName} darkMode={darkMode} toggleDarkMode={toggleDarkMode} setJoined={setJoined}></Lobby>
+			<Form name={name} setName={setName} darkMode={darkMode} toggleDarkMode={toggleDarkMode} setJoined={setJoined}></Form>
         );
     }
 

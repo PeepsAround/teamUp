@@ -1,10 +1,10 @@
 import { Navbar } from "./Navbar";
 
-const Lobby = function ({ name, setName, darkMode, toggleDarkMode, setJoined }) {
+const Form = function ({ name, setName, darkMode, toggleDarkMode, setJoined }) {
 	return (
 		<div className={`flex flex-col h-screen ${darkMode ? 'bg-black text-white' : 'bg-gray-200 text-gray-800'}`}>
 			<Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} name={""} />
-			<div id="lobby-form" className="flex flex-col items-center justify-center flex-grow">
+			<div id="joining-form" className="flex flex-col items-center justify-center flex-grow">
 				<div id="name-field">
 					<input
 						type="text"
@@ -35,4 +35,4 @@ const Lobby = function ({ name, setName, darkMode, toggleDarkMode, setJoined }) 
 		</div>);
 }
 
-export default Lobby;
+export default Form;
