@@ -6,7 +6,6 @@ import TextChat from "./TextChat";
 import VideoChat from "./VideoChat";
 
 var URL = "https://3t0aippcm8.execute-api.ap-south-1.amazonaws.com";
-URL = "http://localhost:3000"
 
 export const Room = ({
 	name,
