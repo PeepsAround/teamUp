@@ -22,6 +22,7 @@ export const Room = ({
 }) => {
 	const [lobby, setLobby] = useState(true);
 	const [tracksLoaded, setTracksLoaded] = useState(false);
+	const [activeTab, setActiveTab] = useState('video');
 
 	// Socket
 	const [socket, setSocket] = useState<null | Socket>(null);
@@ -53,6 +54,19 @@ export const Room = ({
 	const [chat, setChat] = useState<string>("");
 	const [chatMessages, setChatMessages] = useState<string[][]>([]);
 	const [partnerName, setPartnerName] = useState<string>("");
+
+	// Keep video elements persistent
+	const localVideoElement = useRef(null);
+	const remoteVideoElement = useRef(null);
+
+	useEffect(() => {
+		if (localVideoRef && localVideoElement.current) {
+		  localVideoRef.current = localVideoElement.current;
+		}
+		if (remoteVideoRef && remoteVideoElement.current) {
+		  remoteVideoRef.current = remoteVideoElement.current;
+		}
+	  }, [localVideoRef, remoteVideoRef]);
 
 	function handleLeave(doStopCam) {
 		if (doStopCam) stopCam();
@@ -300,31 +314,73 @@ export const Room = ({
 
 	return (
 		<div className={`flex min-h-screen flex-col ${darkMode ? 'bg-black text-white' : 'bg-gray-200 text-gray-800'}`}>
-			<Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} name={name} />
-			<div className={`bg-${darkMode ? 'bg-black' : 'gray-200'} text-${darkMode ? 'white' : 'black'} py-5`}>
-				<div className="flex flex-col lg:flex-row w-full">
-					{/* Left Part */}
-					<VideoChat
-						lobby={lobby}
-						localVideoRef={localVideoRef}
-						remoteVideoRef={remoteVideoRef}
-						handleLeave={handleLeave}
-						socket={socket}
-						setJoined={setJoined}
-						darkMode={darkMode}
-					/>
-					{/* Right Part */}
-					<TextChat
-						partnerName={partnerName}
-						chatMessages={chatMessages}
-						sendingDc={sendingDc}
-						chat={chat}
-						setChatMessages={setChatMessages}
-						setChat={setChat}
-						darkMode={darkMode}
-					/>
-				</div>
+		<Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} name={name} />
+		<div className={`bg-${darkMode ? 'bg-black' : 'gray-200'} text-${darkMode ? 'white' : 'black'} py-5`}>
+		  <div className="flex flex-col lg:flex-row w-full">
+			<div className="hidden lg:flex w-full">
+			  {/* Left Part for larger screens */}
+			  <VideoChat
+				lobby={lobby}
+				localVideoRef={localVideoRef}
+				remoteVideoRef={remoteVideoRef}
+				handleLeave={handleLeave}
+				socket={socket}
+				setJoined={setJoined}
+				darkMode={darkMode}
+			  />
+			  {/* Right Part for larger screens */}
+			  <TextChat
+				partnerName={partnerName}
+				chatMessages={chatMessages}
+				sendingDc={sendingDc}
+				chat={chat}
+				setChatMessages={setChatMessages}
+				setChat={setChat}
+				darkMode={darkMode}
+			  />
 			</div>
+			<div className="lg:hidden w-full">
+			  {/* Tab Navigation for mobile screens */}
+			  <div className="flex justify-around p-2 mx-32 gap-2">
+				<button
+				  className={`flex-1 p-2 rounded-md ${activeTab === 'video' ? darkMode ? 'bg-gray-700' : 'bg-gray-100' : ''}`}
+				  onClick={() => setActiveTab('video')}
+				>
+				  Video
+				</button>
+				<button
+				  className={`flex-1 p-2 rounded-md ${activeTab === 'text' ? darkMode ? 'bg-gray-700' : 'bg-gray-100' : ''}`}
+				  onClick={() => setActiveTab('text')}
+				>
+				  Chat
+				</button>
+			  </div>
+			  {/* Content based on active tab */}
+			  <div className={activeTab === 'video' ? 'block' : 'hidden'}>
+				<VideoChat
+				  lobby={lobby}
+				  localVideoRef={localVideoElement}
+				  remoteVideoRef={remoteVideoElement}
+				  handleLeave={handleLeave}
+				  socket={socket}
+				  setJoined={setJoined}
+				  darkMode={darkMode}
+				/>
+			  </div>
+			  <div className={activeTab === 'text' ? 'block' : 'hidden'}>
+				<TextChat
+				  partnerName={partnerName}
+				  chatMessages={chatMessages}
+				  sendingDc={sendingDc}
+				  chat={chat}
+				  setChatMessages={setChatMessages}
+				  setChat={setChat}
+				  darkMode={darkMode}
+				/>
+			  </div>
+			</div>
+		  </div>
 		</div>
+	  </div>
 	);
 }
