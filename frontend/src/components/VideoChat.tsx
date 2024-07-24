@@ -9,7 +9,7 @@ const VideoChat = ({ lobby, localVideoRef, remoteVideoRef, handleLeave, socket, 
 					<button
 						onClick={() => {
 							handleLeave(false);
-							socket.emit("leave");
+							socket.emit("skip");
 						}}
 						className={`px-4 py-2 ${darkMode ? 'bg-gray-600' : 'bg-gray-600'} text-white rounded-md mr-4 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-700'}`}
 					>
@@ -18,7 +18,7 @@ const VideoChat = ({ lobby, localVideoRef, remoteVideoRef, handleLeave, socket, 
 					<button
 						onClick={() => {
 							handleLeave(true);
-							socket.emit("close");
+							socket.emit("leave");
 							setJoined(false);
 						}}
 						className={`px-4 py-2 ${darkMode ? 'bg-red-500' : 'bg-red-600'} text-white rounded-md ${darkMode ? 'hover:bg-red-600' : 'hover:bg-red-700'}`}

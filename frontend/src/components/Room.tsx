@@ -6,6 +6,7 @@ import TextChat from "./TextChat";
 import VideoChat from "./VideoChat";
 
 var URL = "https://3t0aippcm8.execute-api.ap-south-1.amazonaws.com";
+//URL="http://localhost:3000"
 
 export const Room = ({
 	name,
@@ -63,6 +64,9 @@ export const Room = ({
 		if (doStopCam) stopCam();
 		if (remoteVideoRef.current) {
 			remoteVideoRef.current.srcObject = null;
+		}
+		if(remoteVideoElement.current){
+			remoteVideoElement.current.srcObject = null;
 		}
 		setLobby(true);
 		sendingPc?.close();
@@ -294,9 +298,26 @@ export const Room = ({
 				}
 			});
 
-			socket.on("leave", () => {
+			socket.on("skip", () => {
+				console.log("I am ordered to skip!");
 				handleLeave(false);
 			})
+
+			const keepAliveInterval = setInterval(() => {
+				if (socket.connected) { // Check if the socket is connected
+				  socket.emit('anyEvent', { message: 'keep-alive' });
+				} else {
+				  // Clear the interval if the socket is not connected
+				  clearInterval(keepAliveInterval);
+				}
+			}, 10000);
+
+			// Handle disconnection or cleanup
+			socket.on('disconnect', () => {
+				console.log('Disconnected from the server');
+				// Clear the interval when the socket is disconnected
+				clearInterval(keepAliveInterval);
+			});
 
 			setSocket(socket);
 		}
