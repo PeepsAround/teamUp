@@ -76,13 +76,16 @@ export class RoomManager {
         }
 
         if (roomId) {
+            console.log("Notified the left user to skip");
             const room = this.rooms.get(roomId);
             if (room) {
                 const receivingUser = room.user1 === user ? room.user2: room.user1;
-                receivingUser.socket.emit("leave");
+                receivingUser.socket.emit("skip");
                 this.rooms.delete(roomId);
                 return receivingUser;
             }
+        }else{
+            console.log("Couldn't tell the left user to skip");
         }
         return null;
     }

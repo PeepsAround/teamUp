@@ -62,6 +62,15 @@ export class UserManager {
 
         const id1 = this.queue.shift();
         const id2 = this.queue.pop();
+
+        // Condition to avoid getting in a call with ourselves.
+        if(id1 == id2){
+            console.log("Duplicate user detected!")
+            //@ts-ignore
+            this.queue.push(id1);
+            return;
+        }
+
         console.log("id is " + id1 + " " + id2);
         const user1 = this.users.find(x => x.socket.id === id1);
         const user2 = this.users.find(x => x.socket.id === id2);

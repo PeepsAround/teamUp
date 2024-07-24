@@ -19,8 +19,7 @@ io.on('connection', (socket: Socket) => {
 	// Initialize a timeout for the client
 	let idleTimeout = setTimeout(() => {
 		console.log('Disconnecting idle client with socket Id:', socket.id);
-		userManager.userLeft(socket.id);
-		socket.emit('disconnect');
+		userManager.removeUser(socket.id);
 		socket.disconnect(true);
 	}, IDLE_TIMEOUT);
 
@@ -30,27 +29,29 @@ io.on('connection', (socket: Socket) => {
 		clearTimeout(idleTimeout);
 		idleTimeout = setTimeout(() => {
 			console.log('Disconnecting idle client with socket Id:', socket.id);
-			userManager.userLeft(socket.id);
+			userManager.removeUser(socket.id);
 			socket.disconnect(true);
 		}, IDLE_TIMEOUT);
 	});
 
 	console.log('a user connected', socket.handshake.query['name']);
 	userManager.addUser(socket.handshake.query['name'] as string, socket);
+	
 	socket.on("disconnect", () => {
 		console.log("user disconnected");
 		userManager.removeUser(socket.id);
 		socket.disconnect(true);
 	})
-	socket.on("close", () => {
+	
+	socket.on("leave", () => {
 		console.log("user disconnected");
 		userManager.removeUser(socket.id);
 		socket.disconnect(true);
 	})
-	socket.on("leave", () => {
+
+	socket.on("skip", () => {
 		// remove room
 		userManager.userLeft(socket.id);
-		socket.disconnect(true);
 	})
 });
 
