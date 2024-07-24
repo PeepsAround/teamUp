@@ -3,7 +3,7 @@ const VideoChat = ({ lobby, localVideoRef, remoteVideoRef, handleLeave, socket, 
 		<div id="VideoChat" className="w-full lg:w-1/2 flex flex-col mt-6 lg:ml-32">
 			<div className="w-full lg:w-3/4">
 				<video className="rounded-sm max-h-64" autoPlay width="100%" height="auto" ref={localVideoRef} />
-				{lobby && <p className="text-sm">Waiting to connect you to someone</p>}
+				{lobby && <div className="w-full"><p className="text-sm text-center">Wait, Connecting you with someone!</p></div>}
 				<video className="rounded-sm max-h-64 my-2" autoPlay width="100%" height="auto" ref={remoteVideoRef} />
 				<div className="flex mt-4 justify-center">
 					<button
