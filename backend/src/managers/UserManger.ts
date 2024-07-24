@@ -45,11 +45,16 @@ export class UserManager {
         const user = this.users.find(x => x.socket.id === socketId);
         if (user) {
             const receivingUser = this.roomManager.userLeft(user);
-            this.queue.push(socketId);
-            if (receivingUser) {
-                this.queue.push(receivingUser.socket.id);
-            }
             this.clearQueue();
+            
+            // Add a delay here
+            setTimeout(() => {
+                this.queue.push(socketId);
+                if (receivingUser) {
+                    this.queue.push(receivingUser.socket.id);
+                }
+                this.clearQueue();
+            }, 5000); // delay in milliseconds (e.g., 2000 ms = 2 seconds)
         }
     }
 

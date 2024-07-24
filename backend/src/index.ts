@@ -15,24 +15,24 @@ const userManager = new UserManager();
 
 io.on('connection', (socket: Socket) => {
 
-	const IDLE_TIMEOUT = 11000;
-	// Initialize a timeout for the client
-	let idleTimeout = setTimeout(() => {
-		console.log('Disconnecting idle client with socket Id:', socket.id);
-		userManager.removeUser(socket.id);
-		socket.disconnect(true);
-	}, IDLE_TIMEOUT);
+	// const IDLE_TIMEOUT = 11000;
+	// // Initialize a timeout for the client
+	// let idleTimeout = setTimeout(() => {
+	// 	console.log('Disconnecting idle client with socket Id:', socket.id);
+	// 	userManager.removeUser(socket.id);
+	// 	socket.disconnect(true);
+	// }, IDLE_TIMEOUT);
 
-	// Reset the timeout whenever the client sends any data
-	socket.on('anyEvent', (data) => {
-		console.log('Client alive with socket Id:', socket.id);
-		clearTimeout(idleTimeout);
-		idleTimeout = setTimeout(() => {
-			console.log('Disconnecting idle client with socket Id:', socket.id);
-			userManager.removeUser(socket.id);
-			socket.disconnect(true);
-		}, IDLE_TIMEOUT);
-	});
+	// // Reset the timeout whenever the client sends any data
+	// socket.on('anyEvent', (data) => {
+	// 	console.log('Client alive with socket Id:', socket.id);
+	// 	clearTimeout(idleTimeout);
+	// 	idleTimeout = setTimeout(() => {
+	// 		console.log('Disconnecting idle client with socket Id:', socket.id);
+	// 		userManager.removeUser(socket.id);
+	// 		socket.disconnect(true);
+	// 	}, IDLE_TIMEOUT);
+	// });
 
 	console.log('a user connected', socket.handshake.query['name']);
 	userManager.addUser(socket.handshake.query['name'] as string, socket);
