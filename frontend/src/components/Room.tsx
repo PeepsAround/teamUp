@@ -47,8 +47,8 @@ export const Room = ({
 	const [localVideoTrack, setlocalVideoTrack] = useState<MediaStreamTrack | null>(null);
 
 	// Video element ref
-	const remoteVideoRef = useRef<HTMLVideoElement>(null);
 	var localVideoRef = useRef<HTMLVideoElement>(null);
+	const remoteVideoRef = useRef<HTMLVideoElement>(null);
 
 	// Text chat
 	const [chat, setChat] = useState<string>("");
@@ -58,15 +58,6 @@ export const Room = ({
 	// Keep video elements persistent
 	const localVideoElement = useRef(null);
 	const remoteVideoElement = useRef(null);
-
-	useEffect(() => {
-		if (localVideoRef && localVideoElement.current) {
-		  localVideoRef.current = localVideoElement.current;
-		}
-		if (remoteVideoRef && remoteVideoElement.current) {
-		  remoteVideoRef.current = remoteVideoElement.current;
-		}
-	  }, [localVideoRef, remoteVideoRef]);
 
 	function handleLeave(doStopCam) {
 		if (doStopCam) stopCam();
@@ -131,6 +122,9 @@ export const Room = ({
 		}
 		localVideoRef.current.srcObject = new MediaStream([videoTrack])
 		localVideoRef.current.play();
+
+		localVideoElement.current.srcObject = new MediaStream([videoTrack])
+		localVideoElement.current.play();
 		// MediaStream
 
 		console.log("get cam done");
@@ -208,20 +202,26 @@ export const Room = ({
 					remoteVideoRef.current.srcObject = stream;
 				}
 
+				if (remoteVideoElement.current){
+					remoteVideoElement.current.srcObject = stream;
+				}
+
 				pc.ontrack = (e) => {
 					console.error("inside ontrack");
 					const { track, type } = e;
 					if (type == 'audio') {
 						setRemoteAudioTrack(track);
 						// @ts-ignore
-						remoteVideoRef.current.srcObject.addTrack(track)
+						remoteVideoRef.current.srcObject.addTrack(track);
 					} else {
 						setRemoteVideoTrack(track);
 						// @ts-ignore
-						remoteVideoRef.current.srcObject.addTrack(track)
+						remoteVideoRef.current.srcObject.addTrack(track);
+						remoteVideoElement.current.srcObject.addTrack(track);
 					}
 					//@ts-ignore
 					remoteVideoRef.current.play();
+					remoteVideoElement.current.play();
 				}
 
 				pc.onicecandidate = async (e) => {
