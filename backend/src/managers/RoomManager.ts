@@ -76,7 +76,7 @@ export class RoomManager {
         }
 
         if (roomId) {
-            console.log("Notified the left user to skip");
+            console.log("[RoomManager.ts : UserLeft] One user left, Notifing other to leave");
             const room = this.rooms.get(roomId);
             if (room) {
                 const receivingUser = room.user1 === user ? room.user2: room.user1;
@@ -85,7 +85,7 @@ export class RoomManager {
                 return receivingUser;
             }
         }else{
-            console.log("Couldn't tell the left user to skip");
+            console.log("[RoomManager.ts : UserLeft] One user left, No other user left");
         }
         return null;
     }

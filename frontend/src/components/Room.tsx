@@ -6,7 +6,7 @@ import TextChat from "./TextChat";
 import VideoChat from "./VideoChat";
 
 var URL = "https://3t0aippcm8.execute-api.ap-south-1.amazonaws.com";
-// URL="http://localhost:3000"
+ URL="http://localhost:3000"
 
 export const Room = ({
 	name,
@@ -131,7 +131,6 @@ export const Room = ({
 		localVideoElement.current.play();
 		// MediaStream
 
-		console.log("get cam done");
 		setTracksLoaded(true);
 	}
 
@@ -148,28 +147,21 @@ export const Room = ({
 			});
 
 			socket.on("lobby", () => {
-				console.log("lobby");
 				setLobby(true);
 			})
 
 			socket.on('send-offer', async ({ roomId }: { roomId: string }) => {
-				console.log("sending offer");
 				setLobby(false);
 				const pc = new RTCPeerConnection();
 
 				if (localVideoTrack) {
-					console.error("added tack");
-					console.log(localVideoTrack)
 					pc.addTrack(localVideoTrack)
 				}
 				if (localAudioTrack) {
-					console.error("added tack");
-					console.log(localAudioTrack)
 					pc.addTrack(localAudioTrack)
 				}
 
 				pc.onicecandidate = async (e) => {
-					console.log("receiving ice candidate locally");
 					if (e.candidate) {
 						socket.emit("add-ice-candidate", {
 							candidate: e.candidate,
@@ -180,7 +172,6 @@ export const Room = ({
 				}
 
 				pc.onnegotiationneeded = async () => {
-					console.log("on negotiation neeeded, sending offer");
 					const sdp = await pc.createOffer();
 					//@ts-expect-ignore
 					pc.setLocalDescription(sdp)
@@ -195,7 +186,6 @@ export const Room = ({
 			});
 
 			socket.on("offer", async ({ roomId, sdp: remoteSdp, partnerName }) => {
-				console.log("received offer");
 				setPartnerName(partnerName);
 				setLobby(false);
 				const pc = new RTCPeerConnection();
@@ -232,7 +222,6 @@ export const Room = ({
 					if (!e.candidate) {
 						return;
 					}
-					console.log("omn ice candidate on receiving seide");
 					if (e.candidate) {
 						socket.emit("add-ice-candidate", {
 							candidate: e.candidate,
@@ -242,7 +231,6 @@ export const Room = ({
 					}
 				}
 				const dc = pc.createDataChannel("chat", { negotiated: true, id: 0 });
-				console.log(partnerName);
 				dc.onmessage = (e) => {
 					setChatMessages(prevMessages => [[partnerName, e.data], ...prevMessages]);
 				}
@@ -263,18 +251,14 @@ export const Room = ({
 			});
 
 			socket.on("answer", ({ roomId, sdp: remoteSdp }) => {
-				console.log("answer");
 				setLobby(false);
 				setSendingPc(pc => {
 					pc?.setRemoteDescription(remoteSdp)
 					return pc;
 				});
-				console.log("loop closed");
 			})
 
 			socket.on("add-ice-candidate", ({ candidate, type }) => {
-				console.log("add ice candidate from remote");
-				console.log({ candidate, type })
 				if (type == "sender") {
 					setReceivingPc(pc => {
 						if (!pc) {
@@ -299,22 +283,20 @@ export const Room = ({
 			});
 
 			socket.on("skip", () => {
-				console.log("I am ordered to skip!");
 				handleLeave(false);
 			})
 
-			// const keepAliveInterval = setInterval(() => {
-			// 	if (socket.connected) { // Check if the socket is connected
-			// 	  socket.emit('anyEvent', { message: 'keep-alive' });
-			// 	} else {
-			// 	  // Clear the interval if the socket is not connected
-			// 	  clearInterval(keepAliveInterval);
-			// 	}
-			// }, 10000);
+			const keepAliveInterval = setInterval(() => {
+				if (socket.connected) { // Check if the socket is connected
+				  socket.emit('keepAlive', { message: 'keep-alive' });
+				} else {
+				  // Clear the interval if the socket is not connected
+				  clearInterval(keepAliveInterval);
+				}
+			}, 10000);
 
 			// Handle disconnection or cleanup
 			socket.on('disconnect', () => {
-				console.log('Disconnected from the server');
 				// Clear the interval when the socket is disconnected
 				// clearInterval(keepAliveInterval);
 			});

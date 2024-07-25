@@ -30,15 +30,19 @@ export class UserManager {
     removeUser(socketId: string) {
         const user = this.users.find(x => x.socket.id === socketId);
         if (user) {
-            const receivingUser = this.roomManager.userLeft(user);
-            if (receivingUser) {
-                this.queue.push(receivingUser.socket.id);
+            const leftOutUser = this.roomManager.userLeft(user);
+            if (leftOutUser) {
+                console.log("[UserManager : RemoveUser] Left out user put to the queue");
+                this.queue.push(leftOutUser.socket.id);
             }
             this.clearQueue();
         }
         
         this.users = this.users.filter(x => x.socket.id !== socketId);
+        console.log("[UserManager : RemoveUser] Removed the leaving user from the users queue");
+
         this.queue = this.queue.filter(x => x !== socketId);
+        console.log("[UserManager : RemoveUser] Removed the leaving user from the matching queue");
     }
 
     userLeft(socketId: string) {
@@ -59,8 +63,8 @@ export class UserManager {
     }
 
     clearQueue() {
-        console.log("inside clear queues")
-        console.log(this.queue.length);
+        console.log("[UserManager : ClearQueue] Inside clear queues")
+        console.log("[UserManager : ClearQueue] Waiting queue lenght is :", this.queue.length);
         if (this.queue.length < 2) {
             return;
         }
@@ -70,20 +74,20 @@ export class UserManager {
 
         // Condition to avoid getting in a call with ourselves.
         if(id1 == id2){
-            console.log("Duplicate user detected!")
+            console.log("[UserManager : ClearQueue] Duplicate user detected!")
             //@ts-ignore
             this.queue.push(id1);
             return;
         }
 
-        console.log("id is " + id1 + " " + id2);
+        console.log("[UserManager : ClearQueue] Users with ids" + id1 + " " + id2 + ", entered the chat");
         const user1 = this.users.find(x => x.socket.id === id1);
         const user2 = this.users.find(x => x.socket.id === id2);
 
         if (!user1 || !user2) {
             return;
         }
-        console.log("creating roonm");
+        console.log("[UserManager : ClearQueue] Creating a new roonm");
 
         const room = this.roomManager.createRoom(user1, user2);
         // this may be redundant if clearQueue is also called after a user exits the room 
