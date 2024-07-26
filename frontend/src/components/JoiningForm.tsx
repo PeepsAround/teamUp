@@ -23,7 +23,7 @@ const Form = function ({ name, setName, darkMode, toggleDarkMode, setJoined }) {
 
 	const fetchUserCount = async () => {
 		try {
-			const response = await axios.get('http://localhost:3000/getLiveUsers');
+			const response = await axios.get('https://3t0aippcm8.execute-api.ap-south-1.amazonaws.com/getLiveUsers');
 			setUserCount(response.data);
 		} catch (error) {
 			console.error('Error fetching the user count:', error);
