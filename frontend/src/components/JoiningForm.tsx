@@ -34,7 +34,7 @@ const Form = function ({ name, setName, darkMode, toggleDarkMode, setJoined }) {
 	return (
 		<div className={`flex min-h-screen flex-col ${darkMode ? 'bg-black text-white' : 'bg-gray-200 text-gray-800'}`}>
 			<Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} name={""} />
-			<div id="joining-form" className="text-center mt-40 flex flex-col items-center">
+			<div id="joining-form" className="text-center mt-20 flex flex-col items-center lg:mt-30">
 				<div className={`max-w-screen-md mx-auto items-center ${darkMode ? 'bg-black text-white' : 'bg-gray-200 text-black'} dark:text-white p-4`}>
 					<div className={`text-center ${darkMode ? 'text-white' : 'text-black'}`}>
 						<h1 className="text-6xl mb-2 lg:text-8xl">
@@ -43,7 +43,7 @@ const Form = function ({ name, setName, darkMode, toggleDarkMode, setJoined }) {
 					</div>
 					<br/>
 					<div className="mb-4 mx-16">
-						<p className={`text-2xl ${darkMode ? 'text-white' : 'text-black'}`}>
+						<p className={` text-xl lg:text-2xl ${darkMode ? 'text-gray-400' : 'text-gray-700'}`}>
 							Instantly network with like-minded entrepreneurs. Share ideas, find mentors, and collaborate on projects to drive your venture forward.
 						</p>
 					</div>
