@@ -45,6 +45,10 @@ export class UserManager {
         console.log("[UserManager : RemoveUser] Removed the leaving user from the matching queue");
     }
 
+    getcount(){
+        return this.users.length;
+    }
+
     userLeft(socketId: string) {
         const user = this.users.find(x => x.socket.id === socketId);
         if (user) {
@@ -118,5 +122,4 @@ export class UserManager {
             this.roomManager.onIceCandidates(roomId, socket.id, candidate, type);
         });
     }
-
 }

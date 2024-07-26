@@ -1,8 +1,10 @@
 import { Navbar } from "./Navbar";
+import axios from 'axios';
 import { useState } from "react";
 
 const Form = function ({ name, setName, darkMode, toggleDarkMode, setJoined }) {
 	const [error, setError] = useState('');
+	const [userCount, setUserCount] = useState(0);
 
 	const handleKeyDown = (e) => {
 		if (e.key === 'Enter') {
@@ -19,10 +21,32 @@ const Form = function ({ name, setName, darkMode, toggleDarkMode, setJoined }) {
 		}
 	};
 
+	const fetchUserCount = async () => {
+		try {
+			const response = await axios.get('http://localhost:3000/getLiveUsers');
+			setUserCount(response.data);
+		} catch (error) {
+			console.error('Error fetching the user count:', error);
+		}
+	};
+	fetchUserCount();
+
 	return (
-		<div className={`flex flex-col h-screen ${darkMode ? 'bg-black text-white' : 'bg-gray-200 text-gray-800'}`}>
+		<div className={`flex min-h-screen flex-col ${darkMode ? 'bg-black text-white' : 'bg-gray-200 text-gray-800'}`}>
 			<Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} name={""} />
-			<div id="joining-form" className="flex flex-col items-center justify-center flex-grow">
+			<div id="joining-form" className="text-center mt-40 flex flex-col items-center">
+				<div className={`max-w-screen-md mx-auto items-center ${darkMode ? 'bg-black text-white' : 'bg-gray-200 text-black'} dark:text-white p-4`}>
+					<div className={`text-center ${darkMode ? 'text-white' : 'text-black'}`}>
+						<h1 className="text-6xl mb-2 lg:text-8xl">Network Instantly</h1>
+					</div>
+					<br/>
+					<div className="mb-4 mx-16">
+						<p className={`text-2xl ${darkMode ? 'text-white' : 'text-black'}`}>
+							Instantly network with like-minded entrepreneurs. Share ideas, find mentors, and collaborate on projects to drive your venture forward.
+						</p>
+					</div>
+					<span className={`text-xl font-medium  ${darkMode ? 'text-white' : 'text-black'}`}>{userCount} users live!</span>
+				</div>
 				<div id="name-field" className="flex flex-col items-center">
 					<input
 						type="text"
