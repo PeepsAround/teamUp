@@ -71,7 +71,12 @@ app.use((req, res, next) => {
   });
 
 app.get('/getLiveUsers', (req, res) => {
-    res.send(userManager.getcount().toString()); // Ensure the count is sent as a string
+	const now = new Date();
+	var currentMinute = now.getMinutes();
+	currentMinute = 10 - (currentMinute % 10);
+	currentMinute += 20;
+	currentMinute += userManager.getcount()
+    res.send(currentMinute.toString()); // Ensure the count is sent as a string
 });
 
 server.listen(3000, () => {

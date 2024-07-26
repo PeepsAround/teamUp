@@ -37,7 +37,9 @@ const Form = function ({ name, setName, darkMode, toggleDarkMode, setJoined }) {
 			<div id="joining-form" className="text-center mt-40 flex flex-col items-center">
 				<div className={`max-w-screen-md mx-auto items-center ${darkMode ? 'bg-black text-white' : 'bg-gray-200 text-black'} dark:text-white p-4`}>
 					<div className={`text-center ${darkMode ? 'text-white' : 'text-black'}`}>
-						<h1 className="text-6xl mb-2 lg:text-8xl">Network Instantly</h1>
+						<h1 className="text-6xl mb-2 lg:text-8xl">
+							Network Instantly
+						</h1>
 					</div>
 					<br/>
 					<div className="mb-4 mx-16">
@@ -45,7 +47,7 @@ const Form = function ({ name, setName, darkMode, toggleDarkMode, setJoined }) {
 							Instantly network with like-minded entrepreneurs. Share ideas, find mentors, and collaborate on projects to drive your venture forward.
 						</p>
 					</div>
-					<span className={`text-xl font-medium  ${darkMode ? 'text-white' : 'text-black'}`}>{userCount} users live!</span>
+					<span className={`text-xl font-medium  ${darkMode ? 'text-white' : 'text-black'}`}>{userCount} users online!</span>
 				</div>
 				<div id="name-field" className="flex flex-col items-center">
 					<input
@@ -68,6 +70,9 @@ const Form = function ({ name, setName, darkMode, toggleDarkMode, setJoined }) {
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
 						</svg>
 					</button>
+				</div>
+				<div className="mt-3 mx-36 text-gray-400">
+					<p>Join to get on a video call</p>
 				</div>
 			</div>
 		</div>
