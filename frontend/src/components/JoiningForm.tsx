@@ -38,7 +38,7 @@ const Form = function ({ name, setName, darkMode, toggleDarkMode, setJoined }) {
 				<div className={`max-w-screen-md mx-auto items-center ${darkMode ? 'bg-black text-white' : 'bg-gray-200 text-black'} dark:text-white p-4`}>
 					<div className={`text-center ${darkMode ? 'text-white' : 'text-black'}`}>
 						<h1 className="text-6xl mb-2 lg:text-8xl">
-							Network Instantly
+							Real-Time Networking
 						</h1>
 					</div>
 					<br/>
