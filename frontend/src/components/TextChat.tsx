@@ -3,8 +3,8 @@ const TextChat = ({ partnerName, chatMessages, sendingDc, chat, setChatMessages,
 		if (sendingDc && chat.trim() !== "") {
 			setChatMessages(prevMessages => [["You", chat], ...prevMessages]);
 			sendingDc.send(chat);
-			setChat('');
 		}
+		setChat('');
 	};
 
 	const handleKeyDown = (e) => {
