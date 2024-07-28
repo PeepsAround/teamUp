@@ -13,6 +13,10 @@ const io = new Server(server, {
 	}
 });
 
+const getTime = () => {
+	return "["+new Date().getTime()+"] : ";
+}
+
 const userManager = new UserManager();
 
 io.on('connection', (socket: Socket) => {
@@ -21,7 +25,7 @@ io.on('connection', (socket: Socket) => {
 	// Initialize a timeout for the client
 	let idleTimeout = setTimeout(() => {
 		
-		console.log('[Index.ts : io.on] Disconnecting idle client with socket Id:', socket.id);
+		console.log(getTime() +'[Index.ts : io.on] Disconnecting idle client with socket Id:', socket.id);
 		userManager.removeUser(socket.id);
 		socket.disconnect(true);
 
@@ -34,30 +38,30 @@ io.on('connection', (socket: Socket) => {
 
 		idleTimeout = setTimeout(() => {
 
-			console.log('[Index.ts : io.on] Disconnecting idle client with socket Id:', socket.id);
+			console.log(getTime() +'[Index.ts : io.on] Disconnecting idle client with socket Id:', socket.id);
 			userManager.removeUser(socket.id);
 			socket.disconnect(true);
 			
 		}, IDLE_TIMEOUT);
 	});
 
-	console.log('[Index.ts : io.on] A user connected', socket.handshake.query['name']);
+	console.log(getTime() +'[Index.ts : io.on] A user connected', socket.handshake.query['name']);
 	userManager.addUser(socket.handshake.query['name'] as string, socket);
 	
 	socket.on("disconnect", () => {
-		console.log("[Index.ts : Socket.on.Disconnect] User disconnected");
+		console.log(getTime() +"[Index.ts : Socket.on.Disconnect] User disconnected : " + userManager.getUserFromSocketId(socket.id) + " disconnected");
 		userManager.removeUser(socket.id);
 		socket.disconnect(true);
 	});
 	
 	socket.on("leave", () => {
-		console.log("[Index.ts : Socket.on.Leave] User disconnected");
+		console.log(getTime() +"[Index.ts : Socket.on.Leave] User left : " + userManager.getUserFromSocketId(socket.id) + " disconnected");
 		userManager.removeUser(socket.id);
 		socket.disconnect(true);
 	});
 
 	socket.on("skip", () => {
-		console.log("[Index.ts : Socket.on.Skip] User disconnected");
+		console.log(getTime() +"[Index.ts : Socket.on.Skip] User skipped " + userManager.getUserFromSocketId(socket.id) + " disconnected");
 		// remove room
 		userManager.userLeft(socket.id);
 	});
@@ -80,5 +84,5 @@ app.get('/getLiveUsers', (req, res) => {
 });
 
 server.listen(3000, () => {
-	console.log('[Index.ts : Listen]listening on *:3000');
+	console.log(getTime() +'[Index.ts : Listen]listening on *:3000');
 });

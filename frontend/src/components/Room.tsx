@@ -107,7 +107,7 @@ export const Room = ({
 			.then(stream => {
 				stream.getTracks().forEach(track => track.stop());
 			})
-			.catch(error => console.error("Error accessing media devices.", error));
+			//.catch(error => console.error("Error accessing media devices.", error));
 	};
 
 	const getCam = async () => {
@@ -200,7 +200,7 @@ export const Room = ({
 				}
 
 				pc.ontrack = (e) => {
-					console.error("inside ontrack");
+					//console.error("inside ontrack");
 					const { track, type } = e;
 					if (type == 'audio') {
 						setRemoteAudioTrack(track);
@@ -261,9 +261,9 @@ export const Room = ({
 				if (type == "sender") {
 					setReceivingPc(pc => {
 						if (!pc) {
-							console.error("receicng pc nout found")
+							//console.error("receicng pc nout found")
 						} else {
-							console.error(pc.ontrack)
+							//console.error(pc.ontrack)
 						}
 						pc?.addIceCandidate(candidate)
 						return pc;
@@ -271,7 +271,7 @@ export const Room = ({
 				} else {
 					setSendingPc(pc => {
 						if (!pc) {
-							console.error("sending pc nout found")
+							//console.error("sending pc nout found")
 						} else {
 							// console.error(pc.ontrack)
 						}

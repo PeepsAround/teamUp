@@ -26,7 +26,7 @@ const Form = function ({ name, setName, darkMode, toggleDarkMode, setJoined }) {
 			const response = await axios.get('https://3t0aippcm8.execute-api.ap-south-1.amazonaws.com/getLiveUsers');
 			setUserCount(response.data);
 		} catch (error) {
-			console.error('Error fetching the user count:', error);
+			//console.error('Error fetching the user count:', error);
 		}
 	};
 	fetchUserCount();

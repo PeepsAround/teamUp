@@ -13,6 +13,10 @@ export class RoomManager {
         this.rooms = new Map<string, Room>()
     }
 
+    getTime(){
+        return "["+new Date().getTime()+"] : ";
+    }
+
     createRoom(user1: User, user2: User) {
         const roomId = this.generate().toString();
         this.rooms.set(roomId.toString(), {
@@ -76,16 +80,16 @@ export class RoomManager {
         }
 
         if (roomId) {
-            console.log("[RoomManager.ts : UserLeft] One user left, Notifing other to leave");
             const room = this.rooms.get(roomId);
             if (room) {
                 const receivingUser = room.user1 === user ? room.user2: room.user1;
+                console.log(this.getTime() + "[RoomManager.ts : UserLeft] " + user.name + " left, Notifing" + receivingUser.name + " to skip");
                 receivingUser.socket.emit("skip");
                 this.rooms.delete(roomId);
                 return receivingUser;
             }
         }else{
-            console.log("[RoomManager.ts : UserLeft] One user left, No other user left");
+            console.log(this.getTime() + "[RoomManager.ts : UserLeft] " + user.name + " left, No other user remaining");
         }
         return null;
     }

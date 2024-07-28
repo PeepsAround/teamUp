@@ -10,17 +10,31 @@ export class UserManager {
     private users: User[];
     private queue: string[];
     private roomManager: RoomManager;
+    private socketToUser: Map<string, string>;
     
     constructor() {
         this.users = [];
         this.queue = [];
         this.roomManager = new RoomManager();
+        this.socketToUser = new Map()
+    }
+
+    getTime(){
+        return "["+new Date().getTime()+"] : ";
+    }
+
+    getUserFromSocketId(socketId: string){
+        if (this.socketToUser.has(socketId)){
+            return this.socketToUser.get(socketId);
+        }
+        return "UNKNOWN";
     }
 
     addUser(name: string, socket: Socket) {
         this.users.push({
             name, socket
         })
+        this.socketToUser.set(socket.id, name);
         this.queue.push(socket.id);
         socket.emit("lobby");
         this.clearQueue()
@@ -32,17 +46,17 @@ export class UserManager {
         if (user) {
             const leftOutUser = this.roomManager.userLeft(user);
             if (leftOutUser) {
-                console.log("[UserManager : RemoveUser] Left out user put to the queue");
+                console.log(this.getTime() +"[UserManager : RemoveUser] Left out user : " + leftOutUser.name + " put to the queue");
                 this.queue.push(leftOutUser.socket.id);
             }
             this.clearQueue();
         }
         
         this.users = this.users.filter(x => x.socket.id !== socketId);
-        console.log("[UserManager : RemoveUser] Removed the leaving user from the users queue");
+        console.log(this.getTime() +"[UserManager : RemoveUser] Removed the leaving user : " + this.getUserFromSocketId(socketId) + " from the users queue");
 
         this.queue = this.queue.filter(x => x !== socketId);
-        console.log("[UserManager : RemoveUser] Removed the leaving user from the matching queue");
+        console.log(this.getTime() +"[UserManager : RemoveUser] Removed the leaving user : " + this.getUserFromSocketId(socketId) + " from the matching queue");
     }
 
     getcount(){
@@ -67,8 +81,8 @@ export class UserManager {
     }
 
     clearQueue() {
-        console.log("[UserManager : ClearQueue] Inside clear queues")
-        console.log("[UserManager : ClearQueue] Waiting queue lenght is :", this.queue.length);
+        console.log(this.getTime() +"[UserManager : ClearQueue] Clearing the queues")
+        console.log(this.getTime() +"[UserManager : ClearQueue] Waiting queue lenght is :", this.queue.length);
         if (this.queue.length < 2) {
             return;
         }
@@ -78,20 +92,20 @@ export class UserManager {
 
         // Condition to avoid getting in a call with ourselves.
         if(id1 == id2){
-            console.log("[UserManager : ClearQueue] Duplicate user detected!")
+            console.log(this.getTime() +"[UserManager : ClearQueue] Duplicate user : " + this.getUserFromSocketId(id1 || "") + " detected!")
             //@ts-ignore
             this.queue.push(id1);
             return;
         }
 
-        console.log("[UserManager : ClearQueue] Users with ids" + id1 + " " + id2 + ", entered the chat");
+        console.log(this.getTime() +"[UserManager : ClearQueue] Users " + this.getUserFromSocketId(id1 || "") + " " + this.getUserFromSocketId(id1 || "") + ", entered the chat");
         const user1 = this.users.find(x => x.socket.id === id1);
         const user2 = this.users.find(x => x.socket.id === id2);
 
         if (!user1 || !user2) {
             return;
         }
-        console.log("[UserManager : ClearQueue] Creating a new roonm");
+        console.log(this.getTime() +"[UserManager : ClearQueue] Creating a new room for " + this.getUserFromSocketId(id1 || "") + " and " + this.getUserFromSocketId(id1 || ""));
 
         const room = this.roomManager.createRoom(user1, user2);
         // this may be redundant if clearQueue is also called after a user exits the room 
