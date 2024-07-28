@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { Navbar } from "./Navbar";
 import TextChat from "./TextChat";
+import Vapi from "@vapi-ai/web";
 import VideoChat from "./VideoChat";
 
 var URL = "https://3t0aippcm8.execute-api.ap-south-1.amazonaws.com";
@@ -54,17 +55,71 @@ export const Room = ({
 	const [chat, setChat] = useState<string>("");
 	const [chatMessages, setChatMessages] = useState<string[][]>([]);
 	const [partnerName, setPartnerName] = useState<string>("");
+	const vapi = new Vapi("07fdacfa-e69d-44dc-8999-fc4f6e1024bb");
 
 	// Keep video elements persistent
 	const localVideoElement = useRef(null);
 	const remoteVideoElement = useRef(null);
 
+	const [showAIPopup, setShowAIPopup] = useState(false);
+
+	const startAIInteraction = () => {
+		vapi.start("83f508c6-c045-4d7f-b313-b06b463935f0");
+
+		// Play the video in remote video elements
+		const videoUrl = "https://static.vecteezy.com/system/resources/previews/022/413/348/mp4/artificial-intelligence-animation-sound-of-assistant-free-video.mp4";
+
+		if (remoteVideoRef.current) {
+			remoteVideoRef.current.src = videoUrl;
+			remoteVideoRef.current.loop = true; // Set loop to true
+			remoteVideoRef.current.play();
+		}
+
+		if (remoteVideoElement.current) {
+			remoteVideoElement.current.src = videoUrl;
+			remoteVideoElement.current.loop = true; // Set loop to true
+			remoteVideoElement.current.play();
+		}
+
+		setJoined(true);
+		setLobby(false);
+
+		setPartnerName("Start-Up Mentor AI, Say Hi");
+		setShowAIPopup(true);
+
+		// Close any established connections
+		if (socket) {
+			socket.disconnect();
+		}
+		if (sendingPc) {
+			sendingPc.close();
+		}
+		if (receivingPc) {
+			receivingPc.close();
+		}
+	};
+
+	useEffect(() => {
+		if (tracksLoaded) {
+			const connectionTimeout = setTimeout(() => {
+				if (lobby) {
+					startAIInteraction();
+				}
+			}, 5000);
+
+			return () => clearTimeout(connectionTimeout);
+		}
+	}, [tracksLoaded, lobby]);
+
+
 	function handleLeave(doStopCam) {
+		vapi.say("Thanks, Bye Bye", true)
+		vapi.stop();
 		if (doStopCam) stopCam();
 		if (remoteVideoRef.current) {
 			remoteVideoRef.current.srcObject = null;
 		}
-		if(remoteVideoElement.current){
+		if (remoteVideoElement.current) {
 			remoteVideoElement.current.srcObject = null;
 		}
 		setLobby(true);
@@ -107,7 +162,7 @@ export const Room = ({
 			.then(stream => {
 				stream.getTracks().forEach(track => track.stop());
 			})
-			//.catch(error => console.error("Error accessing media devices.", error));
+		//.catch(error => console.error("Error accessing media devices.", error));
 	};
 
 	const getCam = async () => {
@@ -195,7 +250,7 @@ export const Room = ({
 					remoteVideoRef.current.srcObject = stream;
 				}
 
-				if (remoteVideoElement.current){
+				if (remoteVideoElement.current) {
 					remoteVideoElement.current.srcObject = stream;
 				}
 
@@ -287,10 +342,10 @@ export const Room = ({
 
 			const keepAliveInterval = setInterval(() => {
 				if (socket.connected) { // Check if the socket is connected
-				  socket.emit('keepAlive', { message: 'keep-alive' });
+					socket.emit('keepAlive', { message: 'keep-alive' });
 				} else {
-				  // Clear the interval if the socket is not connected
-				  clearInterval(keepAliveInterval);
+					// Clear the interval if the socket is not connected
+					clearInterval(keepAliveInterval);
 				}
 			}, 10000);
 
@@ -316,73 +371,92 @@ export const Room = ({
 
 	return (
 		<div className={`flex min-h-screen flex-col ${darkMode ? 'bg-black text-white' : 'bg-gray-200 text-gray-800'}`}>
-		<Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} name={name} />
-		<div className={`bg-${darkMode ? 'bg-black' : 'gray-200'} text-${darkMode ? 'white' : 'black'} py-5`}>
-		  <div className="flex flex-col lg:flex-row w-full">
-			<div className="hidden lg:flex w-full">
-			  {/* Left Part for larger screens */}
-			  <VideoChat
-				lobby={lobby}
-				localVideoRef={localVideoRef}
-				remoteVideoRef={remoteVideoRef}
-				handleLeave={handleLeave}
-				socket={socket}
-				setJoined={setJoined}
-				darkMode={darkMode}
-			  />
-			  {/* Right Part for larger screens */}
-			  <TextChat
-				partnerName={partnerName}
-				chatMessages={chatMessages}
-				sendingDc={sendingDc}
-				chat={chat}
-				setChatMessages={setChatMessages}
-				setChat={setChat}
-				darkMode={darkMode}
-			  />
+			<Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} name={name} />
+			{showAIPopup && (
+				<div className="fixed inset-0 flex items-center justify-center z-50">
+					{/* Semi-transparent overlay */}
+					<div className="absolute inset-0 bg-black opacity-50"></div>
+
+					{/* Popup content */}
+					<div className={`relative bg-${darkMode ? 'gray-800' : 'white'} p-6 rounded-lg shadow-lg max-w-sm w-full mx-4`}>
+						<p className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+							You are talking to StartUp Mentor AI, Say Hi(Verbally)
+						</p>
+						<button
+							className={`mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300`}
+							onClick={() => setShowAIPopup(false)}
+						>
+							Got it!
+						</button>
+					</div>
+				</div>
+			)}
+			<div className={`bg-${darkMode ? 'bg-black' : 'gray-200'} text-${darkMode ? 'white' : 'black'} py-5`}>
+				<div className="flex flex-col lg:flex-row w-full">
+					<div className="hidden lg:flex w-full">
+						{/* Left Part for larger screens */}
+						<VideoChat
+							lobby={lobby}
+							localVideoRef={localVideoRef}
+							remoteVideoRef={remoteVideoRef}
+							handleLeave={handleLeave}
+							socket={socket}
+							setJoined={setJoined}
+							darkMode={darkMode}
+						/>
+						{/* Right Part for larger screens */}
+						<TextChat
+							partnerName={partnerName}
+							chatMessages={chatMessages}
+							sendingDc={sendingDc}
+							chat={chat}
+							setChatMessages={setChatMessages}
+							setChat={setChat}
+							darkMode={darkMode}
+						/>
+					</div>
+					<div className="lg:hidden w-full">
+						{/* Tab Navigation for mobile screens */}
+						<div className="flex justify-around p-2 mx-32 gap-2">
+							<button
+								className={`flex-1 p-2 rounded-md ${activeTab === 'video' ? darkMode ? 'bg-gray-700' : 'bg-gray-100' : ''}`}
+								onClick={() => setActiveTab('video')}
+							>
+								Video
+							</button>
+							<button
+								className={`flex-1 p-2 rounded-md ${activeTab === 'text' ? darkMode ? 'bg-gray-700' : 'bg-gray-100' : ''}`}
+								onClick={() => setActiveTab('text')}
+							>
+								Chat
+							</button>
+						</div>
+						{/* Content based on active tab */}
+						<div className={activeTab === 'video' ? 'block' : 'hidden'}>
+							<VideoChat
+								lobby={lobby}
+								localVideoRef={localVideoElement}
+								remoteVideoRef={remoteVideoElement}
+								handleLeave={handleLeave}
+								socket={socket}
+								setJoined={setJoined}
+								darkMode={darkMode}
+							/>
+						</div>
+						<div className={activeTab === 'text' ? 'block' : 'hidden'}>
+							<TextChat
+								partnerName={partnerName}
+								chatMessages={chatMessages}
+								sendingDc={sendingDc}
+								chat={chat}
+								setChatMessages={setChatMessages}
+								setChat={setChat}
+								darkMode={darkMode}
+							/>
+						</div>
+					</div>
+				</div>
 			</div>
-			<div className="lg:hidden w-full">
-			  {/* Tab Navigation for mobile screens */}
-			  <div className="flex justify-around p-2 mx-32 gap-2">
-				<button
-				  className={`flex-1 p-2 rounded-md ${activeTab === 'video' ? darkMode ? 'bg-gray-700' : 'bg-gray-100' : ''}`}
-				  onClick={() => setActiveTab('video')}
-				>
-				  Video
-				</button>
-				<button
-				  className={`flex-1 p-2 rounded-md ${activeTab === 'text' ? darkMode ? 'bg-gray-700' : 'bg-gray-100' : ''}`}
-				  onClick={() => setActiveTab('text')}
-				>
-				  Chat
-				</button>
-			  </div>
-			  {/* Content based on active tab */}
-			  <div className={activeTab === 'video' ? 'block' : 'hidden'}>
-				<VideoChat
-				  lobby={lobby}
-				  localVideoRef={localVideoElement}
-				  remoteVideoRef={remoteVideoElement}
-				  handleLeave={handleLeave}
-				  socket={socket}
-				  setJoined={setJoined}
-				  darkMode={darkMode}
-				/>
-			  </div>
-			  <div className={activeTab === 'text' ? 'block' : 'hidden'}>
-				<TextChat
-				  partnerName={partnerName}
-				  chatMessages={chatMessages}
-				  sendingDc={sendingDc}
-				  chat={chat}
-				  setChatMessages={setChatMessages}
-				  setChat={setChat}
-				  darkMode={darkMode}
-				/>
-			  </div>
-			</div>
-		  </div>
 		</div>
-	  </div>
 	);
 }

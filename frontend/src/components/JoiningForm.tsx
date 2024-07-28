@@ -47,7 +47,7 @@ const Form = function ({ name, setName, darkMode, toggleDarkMode, setJoined }) {
 							Instantly network with like-minded entrepreneurs. Share ideas, find mentors, and collaborate on projects to drive your venture forward.
 						</p>
 					</div>
-					<span className={`text-xl font-medium  ${darkMode ? 'text-white' : 'text-black'}`}>{userCount} users online!</span>
+					<span className={`text-xl font-medium  ${darkMode ? 'text-white' : 'text-black'}`}>Our Start-Up Mentor AI is online, Join in to chat!</span>
 				</div>
 				<div id="name-field" className="flex flex-col items-center">
 					<input
