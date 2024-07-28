@@ -4,6 +4,7 @@ import { Socket } from "socket.io";
 export interface User {
     socket: Socket;
     name: string;
+    withAIMentor: boolean;
 }
 
 export class UserManager {
@@ -33,15 +34,18 @@ export class UserManager {
         return "UNKNOWN";
     }
 
-    addUser(name: string, socket: Socket) {
+    addUser(name: string, socket: Socket, withAIMentor: boolean = false) {
         this.users.push({
-            name, socket
+            name, socket, withAIMentor
         })
         this.socketToUser.set(socket.id, name);
-        this.queue.push(socket.id);
-        socket.emit("lobby");
-        this.clearQueue()
-        this.initHandlers(socket);
+        
+        if(!withAIMentor){
+            this.queue.push(socket.id);
+            socket.emit("lobby");
+            this.clearQueue();
+            this.initHandlers(socket);
+        }
     }
 
     removeUser(socketId: string) {
@@ -72,16 +76,22 @@ export class UserManager {
             const receivingUser = this.roomManager.userLeft(user);
             this.clearQueue();
             
-            // Add a delay here
+            // Generate a random delay between 0 and 6000 milliseconds (0 to 6 seconds)
             setTimeout(() => {
                 this.queue.push(socketId);
                 if (receivingUser) {
                     this.queue.push(receivingUser.socket.id);
                 }
                 this.clearQueue();
-            }, 5000); // delay in milliseconds (e.g., 2000 ms = 2 seconds)
+            }, 1000);
         }
     }
+
+    userIsWithAIMentor(socketId: string) {
+        this.queue = this.queue.filter(x => x !== socketId);
+       this.clearQueue()
+    }
+    
 
     clearQueue() {
         console.log(this.getTime() +"[UserManager : ClearQueue] Clearing the queues")

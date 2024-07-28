@@ -7,6 +7,8 @@ import Vapi from "@vapi-ai/web";
 import VideoChat from "./VideoChat";
 
 var URL = "https://3t0aippcm8.execute-api.ap-south-1.amazonaws.com";
+URL="http://localhost:3000"
+
 
 export const Room = ({
 	name,
@@ -55,7 +57,7 @@ export const Room = ({
 	const [chat, setChat] = useState<string>("");
 	const [chatMessages, setChatMessages] = useState<string[][]>([]);
 	const [partnerName, setPartnerName] = useState<string>("");
-	const vapi = new Vapi("07fdacfa-e69d-44dc-8999-fc4f6e1024bb");
+	const [vapi, setVapi] = useState<Vapi>(null);
 
 	// Keep video elements persistent
 	const localVideoElement = useRef(null);
@@ -64,7 +66,11 @@ export const Room = ({
 	const [showAIPopup, setShowAIPopup] = useState(false);
 
 	const startAIInteraction = () => {
-		vapi.start("83f508c6-c045-4d7f-b313-b06b463935f0");
+		setVapi((prevVapi) => {
+			const newVapi = new Vapi("07fdacfa-e69d-44dc-8999-fc4f6e1024bb");
+			newVapi.start("83f508c6-c045-4d7f-b313-b06b463935f0");
+			return newVapi;
+		});
 
 		// Play the video in remote video elements
 		const videoUrl = "https://static.vecteezy.com/system/resources/previews/022/413/348/mp4/artificial-intelligence-animation-sound-of-assistant-free-video.mp4";
@@ -81,40 +87,34 @@ export const Room = ({
 			remoteVideoElement.current.play();
 		}
 
-		setJoined(true);
 		setLobby(false);
 
 		setPartnerName("Start-Up Mentor AI, Say Hi");
 		setShowAIPopup(true);
 
 		// Close any established connections
-		if (socket) {
-			socket.disconnect();
-		}
-		if (sendingPc) {
-			sendingPc.close();
-		}
-		if (receivingPc) {
-			receivingPc.close();
-		}
+		socket.emit("withAI");
 	};
 
 	useEffect(() => {
 		if (tracksLoaded) {
 			const connectionTimeout = setTimeout(() => {
-				if (lobby) {
+				if (lobby && socket && vapi == null) {
 					startAIInteraction();
 				}
 			}, 5000);
 
 			return () => clearTimeout(connectionTimeout);
 		}
-	}, [tracksLoaded, lobby]);
+	}, [socket, lobby]);
 
 
-	function handleLeave(doStopCam) {
-		vapi.say("Thanks, Bye Bye", true)
-		vapi.stop();
+	async function handleLeave(doStopCam) {
+		if(vapi != null){
+			await vapi.say("Thanks, Bye Bye", true)
+			await vapi.stop();
+			setVapi(null);
+		}
 		if (doStopCam) stopCam();
 		if (remoteVideoRef.current) {
 			remoteVideoRef.current.srcObject = null;
@@ -122,7 +122,26 @@ export const Room = ({
 		if (remoteVideoElement.current) {
 			remoteVideoElement.current.srcObject = null;
 		}
+
+		if (remoteVideoRef.current) {
+			remoteVideoRef.current.pause();
+			remoteVideoRef.current.removeAttribute('src');
+			remoteVideoRef.current.loop = false;
+			remoteVideoRef.current.load();
+			remoteVideoRef.current.removeAttribute('poster');
+		}
+		
+		if (remoteVideoElement.current) {
+			remoteVideoElement.current.pause();
+			remoteVideoElement.current.removeAttribute('src');
+			remoteVideoElement.current.loop = false;
+			remoteVideoElement.current.load();
+			remoteVideoElement.current.removeAttribute('poster');
+		}
+		
+
 		setLobby(true);
+		setPartnerName(null);
 		sendingPc?.close();
 		setSendingPc(pc => {
 			if (pc) {
@@ -355,10 +374,11 @@ export const Room = ({
 				// clearInterval(keepAliveInterval);
 			});
 
+			console.log("socket created");
 			setSocket(socket);
 		}
 
-	}, [name, localVideoRef, joined, tracksLoaded])
+	}, [tracksLoaded])
 
 	// useEffect(() => {
 	//     if (localVideoRef.current) {

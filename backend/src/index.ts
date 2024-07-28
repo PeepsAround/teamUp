@@ -28,7 +28,7 @@ io.on('connection', (socket: Socket) => {
 	// Initialize a timeout for the client
 	let idleTimeout = setTimeout(() => {
 		
-		console.log(getTime() +'[Index.ts : io.on] Disconnecting idle client with socket Id:', socket.id);
+		console.log(getTime() +"[Index.ts : io.on] Disconnecting  idle client " + userManager.getUserFromSocketId(socket.id) + "with socket Id:", socket.id);
 		userManager.removeUser(socket.id);
 		socket.disconnect(true);
 
@@ -41,7 +41,7 @@ io.on('connection', (socket: Socket) => {
 
 		idleTimeout = setTimeout(() => {
 
-			console.log(getTime() +'[Index.ts : io.on] Disconnecting idle client with socket Id:', socket.id);
+			console.log(getTime() +"[Index.ts : io.on] Disconnecting idle client " + userManager.getUserFromSocketId(socket.id) + " with socket Id:", socket.id);
 			userManager.removeUser(socket.id);
 			socket.disconnect(true);
 			
@@ -67,6 +67,11 @@ io.on('connection', (socket: Socket) => {
 		console.log(getTime() +"[Index.ts : Socket.on.Skip] User skipped " + userManager.getUserFromSocketId(socket.id) + " disconnected");
 		// remove room
 		userManager.userLeft(socket.id);
+	});
+
+	socket.on("withAI", () => {
+		console.log(getTime() +"[Index.ts : Socket.on.WithAI User : " + userManager.getUserFromSocketId(socket.id) + " with AI Mentor");
+		userManager.userIsWithAIMentor(socket.id);
 	});
 });
 
