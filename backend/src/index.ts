@@ -14,7 +14,10 @@ const io = new Server(server, {
 });
 
 const getTime = () => {
-	return "["+new Date().getTime()+"] : ";
+	const timestamp = new Date().getTime();
+	const date = new Date(timestamp);
+	const humanReadableDate = date.toUTCString();
+	return "["+ humanReadableDate +"] : ";
 }
 
 const userManager = new UserManager();

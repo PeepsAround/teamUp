@@ -19,7 +19,7 @@ const TextChat = ({ partnerName, chatMessages, sendingDc, chat, setChatMessages,
 			<div className={`w-full bg-${darkMode ? 'gray-700' : 'white'} p-4 rounded-lg shadow-md h-[540px] overflow-y-auto flex flex-col-reverse`}>
 				{chatMessages.map((message, index) => (
 					<div key={index} className={`flex flex-col ${message[0] === "You" ? 'items-end' : 'items-start'} mb-4`}>
-						<div className={`${message[0] === "You" ? 'bg-blue-500 text-white' : darkMode ? 'bg-gray-200 text-gray-900' : 'bg-white text-gray-900'} rounded-md p-2 max-w-64 break-words min-w-16`}>
+						<div className={`${message[0] === "You" ? 'bg-blue-500 text-white' : darkMode ? 'bg-gray-200 text-gray-900' : 'bg-gray-200 text-gray-900'} rounded-md p-2 max-w-64 break-words min-w-16`}>
 							{message[1]}
 						</div>
 						<div className="text-xs">{message[0]}</div>

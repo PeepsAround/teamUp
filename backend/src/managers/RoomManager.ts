@@ -14,7 +14,10 @@ export class RoomManager {
     }
 
     getTime(){
-        return "["+new Date().getTime()+"] : ";
+        const timestamp = new Date().getTime();
+	    const date = new Date(timestamp);
+        const humanReadableDate = date.toUTCString();
+        return "["+ humanReadableDate +"] : ";
     }
 
     createRoom(user1: User, user2: User) {

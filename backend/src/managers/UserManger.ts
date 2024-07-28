@@ -20,7 +20,10 @@ export class UserManager {
     }
 
     getTime(){
-        return "["+new Date().getTime()+"] : ";
+        const timestamp = new Date().getTime();
+	    const date = new Date(timestamp);
+        const humanReadableDate = date.toUTCString();
+        return "["+ humanReadableDate +"] : ";
     }
 
     getUserFromSocketId(socketId: string){
@@ -98,14 +101,14 @@ export class UserManager {
             return;
         }
 
-        console.log(this.getTime() +"[UserManager : ClearQueue] Users " + this.getUserFromSocketId(id1 || "") + " " + this.getUserFromSocketId(id1 || "") + ", entered the chat");
+        console.log(this.getTime() +"[UserManager : ClearQueue] Users " + this.getUserFromSocketId(id1 || "") + " " + this.getUserFromSocketId(id2 || "") + ", entered the chat");
         const user1 = this.users.find(x => x.socket.id === id1);
         const user2 = this.users.find(x => x.socket.id === id2);
 
         if (!user1 || !user2) {
             return;
         }
-        console.log(this.getTime() +"[UserManager : ClearQueue] Creating a new room for " + this.getUserFromSocketId(id1 || "") + " and " + this.getUserFromSocketId(id1 || ""));
+        console.log(this.getTime() +"[UserManager : ClearQueue] Creating a new room for " + this.getUserFromSocketId(id2 || "") + " and " + this.getUserFromSocketId(id1 || ""));
 
         const room = this.roomManager.createRoom(user1, user2);
         // this may be redundant if clearQueue is also called after a user exits the room 
