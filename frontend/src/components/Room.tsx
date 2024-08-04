@@ -399,7 +399,7 @@ export const Room = ({
 					{/* Popup content */}
 					<div className={`relative bg-${darkMode ? 'gray-800' : 'white'} p-6 rounded-lg shadow-lg max-w-sm w-full mx-4`}>
 						<p className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-							You are talking to StartUp Mentor AI, Say Hi(Verbally)
+							No one seems to be free, Peering you up with AI.
 						</p>
 						<button
 							className={`mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300`}

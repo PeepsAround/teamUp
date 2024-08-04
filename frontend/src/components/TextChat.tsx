@@ -15,7 +15,7 @@ const TextChat = ({ partnerName, chatMessages, sendingDc, chat, setChatMessages,
 
 	return (
 		<div id="Textchat" className="flex-1 flex flex-col mx-10 lg:mr-32 mt-4 lg:mt-0">
-			<div className="w-full text-left">{partnerName ? `You are now chatting with ${partnerName}` : "Finding someone!"}</div>
+			<div className="w-full text-left">{partnerName ? `You are now chatting with ${partnerName}` : ""}</div>
 			<div className={`w-full bg-${darkMode ? 'gray-700' : 'white'} p-4 rounded-lg shadow-md h-[540px] overflow-y-auto flex flex-col-reverse`}>
 				{chatMessages.map((message, index) => (
 					<div key={index} className={`flex flex-col ${message[0] === "You" ? 'items-end' : 'items-start'} mb-4`}>

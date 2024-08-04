@@ -44,7 +44,7 @@ const Form = function ({ name, setName, darkMode, toggleDarkMode, setJoined }) {
 					<br/>
 					<div className="mb-4 mx-16">
 						<p className={` text-xl lg:text-2xl ${darkMode ? 'text-gray-400' : 'text-gray-700'}`}>
-							Instantly network with like-minded entrepreneurs. Share ideas, find mentors, and collaborate on projects to drive your venture forward.
+							Instantly network with like-minded entrepreneurs. Share ideas, find mentors, and collaborate on projects, drive your venture forward.
 						</p>
 					</div>
 					<span className={`text-xl font-medium  ${darkMode ? 'text-white' : 'text-black'}`}>Our Start-Up Mentor AI is online, Join in to chat!</span>
